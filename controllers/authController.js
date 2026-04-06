@@ -1,4 +1,4 @@
-import {loginUser,OtpUser} from '../services/authService.js';
+import {loginUser,OtpUser,passwordUser} from '../services/authService.js';
 
 export const userLogin=async(req,res)=>{
     try {
@@ -15,5 +15,14 @@ export const userOTP=async(req,res)=>{
         return res.status(200).json(otpResponse);
     } catch (error) {
         return res.status(400).json(error.message);
+    }
+}
+
+export const userPassword=async(req,res)=>{
+    try {
+        const passwordResponse=await passwordUser(req.body);
+        return res.status(200).json(passwordResponse);
+    } catch (error) {
+        return res.status(401).json(error.message);
     }
 }

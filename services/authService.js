@@ -3,13 +3,14 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import sendOTP from '../config/otp.js';
 dotenv.config();
+import bcrypt from 'bcrypt';
 
 let emailOTP=new Map();
 
 const validEmail=(email)=>{
     const domain=email.split('@')[1];
     console.log("domain",domain)
-    if(domain!=="sharklasers.com" ){
+    if(domain!==process.env.companyDomain && "sharklasers.com" ){
         return false;
     }
     return true;
@@ -19,10 +20,15 @@ export const loginUser=async({email})=>{
     try {
         if(validEmail(email)){
             console.log("valid email")
-            const OTP=await sendOTP(email);
-            emailOTP.set(email,OTP);
-            console.log(emailOTP)
-            return {message:`OTP ${OTP} sent successfully to mail ${email}`};
+            const isuser=await employeeModel.findOne({email:email});
+            if(!isuser){
+                const OTP=await sendOTP(email);
+                emailOTP.set(email,OTP);
+                return {message:`OTP ${OTP} sent successfully to mail ${email}`,isuser:false};
+            }
+            else{
+                return {message:`Please Login`,isuser:true};
+            }
         }
         else {
             throw new Error('Invalid Email');
@@ -35,20 +41,7 @@ export const loginUser=async({email})=>{
 export const OtpUser=async({email,userOtp})=>{
     try {
         if(userOtp === emailOTP.get(email)){
-            console.log("route",emailOTP.get(email));
-            const name=email.split('_')[0];
-            const role=email.split('_')[1].split('@')[0];
-            const newEmployee=new employeeModel({name,email,role});
-            await newEmployee.save();
-
-            const token=jwt.sign({
-                userName:newEmployee.name,
-                userEmail:newEmployee.email,
-                userRole:newEmployee.role,
-                userStatus:newEmployee.status
-            },process.env.secretKey);
-            
-            return {message:'User authenticated successfully',token:token};
+            return {message:'Email ID authenticated successfully'};
         }
         else{
             throw new Error('OTP not valid') ;
@@ -56,5 +49,27 @@ export const OtpUser=async({email,userOtp})=>{
     }
     catch (error) {
         throw new Error('Error in authenticating User from OTP ');
+    }
+}
+
+export const passwordUser=async({email,password})=>{
+    try {
+        const name=email.split('_')[0];
+        const role=email.split('_')[1].split('@')[0];
+        const ispassword=await bcrypt.hash(password,10);
+        const newEmployee=new employeeModel({name,email,password:ispassword,role});
+        await newEmployee.save();
+
+        const token=jwt.sign({
+            userName:newEmployee.name,
+            userEmail:newEmployee.email,
+            userPassword:newEmployee.password,
+            userRole:newEmployee.role,
+            userStatus:newEmployee.status
+        },process.env.secretKey);
+
+        return {message:'User authenticated successfully',token:token};
+    } catch (error) {
+        
     }
 }

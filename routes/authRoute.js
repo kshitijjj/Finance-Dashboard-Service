@@ -1,5 +1,5 @@
 import express from 'express';
-import {userLogin,userOTP} from '../controllers/authController.js';
+import {userLogin,userOTP,userPassword} from '../controllers/authController.js';
 
 const route=express.Router();
 
@@ -8,5 +8,6 @@ route.get('/',(req,res)=>{
 })
 route.post('/login',userLogin);
 route.post('/login/otp',userOTP);
+route.post('/login/password',userPassword);
 
 export default route;

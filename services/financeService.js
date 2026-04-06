@@ -48,7 +48,8 @@ export const recordsUpdate = async (key,{ userId }, { id }, { amount, financeTyp
     console.log(updateObject);
     try {
         await deleteCache(key);
-        await financeModel.findOneAndUpdate({_id:id,userId:userId},updateObject);
+        const res=await financeModel.findOneAndUpdate({_id:id,userId:userId},updateObject);
+        if(!res)return {message:"Financial record not found"};
         return {message:"Financial record updated successfully"};
     } catch (error) {
         throw new Error(error.message);
@@ -58,7 +59,9 @@ export const recordsUpdate = async (key,{ userId }, { id }, { amount, financeTyp
 export const recordsDelete = async (key,{ userId }, { id }) => {
     try {
         await deleteCache(key);
-        await financeModel.findOneAndDelete({ userId: userId, _id: id });
+
+        const res=await financeModel.findOneAndDelete({ userId: userId, _id: id });
+        if(!res)return {message:"Financial Record not found"};
         return { message: "Financial record deleted successfully" };
     } catch (error) {
         throw new Error(error.message);

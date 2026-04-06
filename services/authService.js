@@ -54,21 +54,33 @@ export const OtpUser=async({email,userOtp})=>{
 
 export const passwordUser=async({email,password})=>{
     try {
+        const isuser=await employeeModel.findOne({email:email});
         const name=email.split('_')[0];
         const role=email.split('_')[1].split('@')[0];
-        const ispassword=await bcrypt.hash(password,10);
-        const newEmployee=new employeeModel({name,email,password:ispassword,role});
-        await newEmployee.save();
 
-        const token=jwt.sign({
+        if(isuser){
+            const ispassword=await bcrypt.compare(password,isuser.password);
+            if(!ispassword)return "Invalid Password"
+            const token=jwt.sign({
+            userName:isuser.name,
+            userEmail:isuser.email,
+            userRole:isuser.role,
+            userStatus:isuser.status
+        },process.env.secretKey);
+        }
+        else{
+            const ispassword=await bcrypt.hash(password,10);
+            const newEmployee=new employeeModel({name,email,password:ispassword,role});
+            await newEmployee.save();
+            const token=jwt.sign({
             userName:newEmployee.name,
             userEmail:newEmployee.email,
             userRole:newEmployee.role,
             userStatus:newEmployee.status
         },process.env.secretKey);
-
+        }
         return {message:'User authenticated successfully',token:token};
     } catch (error) {
-        
+        throw new Error(error.message);
     }
 }

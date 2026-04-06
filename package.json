@@ -1,0 +1,24 @@
+{
+  "name": "finance-dashboard-system",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@getbrevo/brevo": "^5.0.3",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.2",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "express-redis": "^2.0.1",
+    "express-redis-cache": "^1.1.3",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.4.1"
+  }
+}

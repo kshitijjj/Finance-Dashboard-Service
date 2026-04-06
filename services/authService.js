@@ -10,7 +10,7 @@ let emailOTP=new Map();
 const validEmail=(email)=>{
     const domain=email.split('@')[1];
     console.log("domain",domain)
-    if(domain!==process.env.companyDomain && "sharklasers.com" ){
+    if(domain!==process.env.companyDomain && domain!=="sharklasers.com" ){
         return false;
     }
     return true;
@@ -63,7 +63,6 @@ export const passwordUser=async({email,password})=>{
         const token=jwt.sign({
             userName:newEmployee.name,
             userEmail:newEmployee.email,
-            userPassword:newEmployee.password,
             userRole:newEmployee.role,
             userStatus:newEmployee.status
         },process.env.secretKey);

@@ -1,6 +1,6 @@
 export const viewerAccess=async(req,res,next)=>{
     try {
-        if(req.user.role!=='finance')next();
+        if(req.user.userRole!=='finance')next();
         else {
             return res.status(401).json('User Unauthorised')
         };
@@ -11,7 +11,9 @@ export const viewerAccess=async(req,res,next)=>{
 
 export const analystAccess=async(req,res,next)=>{
     try {
-        if(req.user.role==='finance')next();
+        if(req.user.userRole==='finance'){
+            next();
+        }
         else {
             return res.status(401).json('User Unauthorised')
         };
@@ -22,7 +24,7 @@ export const analystAccess=async(req,res,next)=>{
 
 export const adminAccess=async(req,res,next)=>{
     try {
-        if(req.user.role==='finance' && req.user.name==='admin')next();
+        if(req.user.userRole==='finance' && req.user.userName==='admin')next();
         else {
             return res.status(401).json('User Unauthorised')
         };

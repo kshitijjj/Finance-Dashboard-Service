@@ -57,11 +57,11 @@ export const passwordUser=async({email,password})=>{
         const isuser=await employeeModel.findOne({email:email});
         const name=email.split('_')[0];
         const role=email.split('_')[1].split('@')[0];
-
+        let token;
         if(isuser){
             const ispassword=await bcrypt.compare(password,isuser.password);
             if(!ispassword)return "Invalid Password"
-            const token=jwt.sign({
+            token=jwt.sign({
             userName:isuser.name,
             userEmail:isuser.email,
             userRole:isuser.role,
@@ -72,7 +72,7 @@ export const passwordUser=async({email,password})=>{
             const ispassword=await bcrypt.hash(password,10);
             const newEmployee=new employeeModel({name,email,password:ispassword,role});
             await newEmployee.save();
-            const token=jwt.sign({
+            token=jwt.sign({
             userName:newEmployee.name,
             userEmail:newEmployee.email,
             userRole:newEmployee.role,

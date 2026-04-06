@@ -15,7 +15,7 @@ export const responseGet = async ({page=0,limit=0}) => {
         return records;
     }
     catch (error) {
-        throw new Error(`Error in fetching the financial records ${error.message}`);
+        throw new Error(error.message);
     }
 }
 
